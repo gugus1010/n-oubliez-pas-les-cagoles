@@ -9,39 +9,45 @@
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             padding: 20px;
+            color: #333;
         }
         .playlist {
             background-color: #fff;
-            padding: 10px;
+            padding: 15px;
             margin-bottom: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease;
             overflow: hidden;
             position: relative;
+            display: flex;
+            align-items: center;
         }
         .playlist:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         .playlist img {
             width: 100px;
             height: 100px;
             cursor: pointer;
-            border-radius: 5px;
-            float: left;
-            margin-right: 10px;
+            border-radius: 8px;
+            margin-right: 15px;
+            transition: transform 0.3s ease;
+        }
+        .playlist img:hover {
+            transform: scale(1.05);
         }
         .playlist .details {
-            overflow: hidden;
+            flex-grow: 1;
         }
         .playlist .details h2 {
             margin-top: 0;
-            margin-bottom: 5px;
-            font-size: 18px;
+            margin-bottom: 10px;
+            font-size: 20px;
         }
         .playlist .details .tracks {
             display: none;
-            margin-top: 10px;
+            margin-top: 15px;
         }
         .playlist .details .tracks.active {
             display: block;
@@ -50,7 +56,7 @@
             margin: 5px 0;
             padding: 10px;
             background-color: #f7f7f7;
-            border-radius: 3px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -63,33 +69,59 @@
         }
         #settings {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             display: none;
         }
-        #settings label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        #settings input {
+        #settings .form-group {
+            display: flex;
+            align-items: center;
             margin-bottom: 10px;
+        }
+        #settings .form-group label {
+            margin: 0;
+            margin-right: 10px;
+        }
+
+        #settings input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: calc(100% - 16px);
         }
         #audioPlayer {
             margin-top: 20px;
+            width: 100%;
         }
         #controls {
             margin-bottom: 20px;
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #e0e0e0;
-            padding: 10px;
-            border-radius: 5px;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         #controls button {
-            margin-right: 10px;
+            margin-right: 0;
+            padding: 10px 20px;
+            background-color: #1db954;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+        #controls button:hover {
+            background-color: #17a049;
+            transform: scale(1.05);
         }
         button {
             background-color: #1db954;
@@ -97,31 +129,31 @@
             border: none;
             padding: 10px 20px;
             cursor: pointer;
-            border-radius: 3px;
+            border-radius: 5px;
             transition: background-color 0.3s ease, transform 0.1s ease;
         }
-
         button:hover {
             background-color: #17a049;
             transform: scale(1.05);
         }
-        
-
         #passedTracks {
-            display: none; /* Cache le conteneur au chargement de la page */
+            display: none;
             margin-top: 20px;
-            padding: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 999;
+            width: calc(100% - 40px);
+            max-width: 400px;
         }
         #passedTracks h2 {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         #passedTracks ul {
             list-style-type: none;
@@ -129,15 +161,22 @@
             margin: 0;
         }
         #passedTracks ul li {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        #passedTracks ul li:hover {
+            background-color: #e0e0e0;
         }
         #resetButton {
-            margin-top: 10px;
+            margin-top: 15px;
             background-color: #f44336;
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 3px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -146,11 +185,15 @@
         }
         #qrcodeContainer {
             position: fixed;
-            top: 70px;
+            top: 225px;
             right: 20px;
             text-align: center;
-            display: none; /* Cache le QR code initialement */
+            display: none;
             z-index: 999;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -161,8 +204,6 @@
     <div id="validationMessage" style="display: none;">
         Paramètres mis à jour avec succès!
     </div>
-    
-    
     <div id="controls">
         <button id="pauseButton" onclick="togglePause()">Pause</button>
         <button id="settingsButton" onclick="smoothScroll('settings')">Paramètres</button>
@@ -170,10 +211,10 @@
     </div>
     <div id="error"></div>
     <div id="settings" style="display: none;">
-        <label>
+        <div class="form-group">
             <input type="checkbox" id="numTracksInput" onchange="updateMaxTracksToPlay()">
-            Lire un nombre spécifique de titres :
-        </label>
+            <label for="numTracksInput">Lire un nombre spécifique de titres :</label>
+        </div>
         <input type="number" id="numTracks" min="1" value="10" disabled>
         <br>
         <label>
@@ -194,19 +235,15 @@
         <ul id="passedTracksList"></ul>
         <button id="resetButton" onclick="resetPassedTracks()">Effacer la liste</button>
     </div>
-
-
     <div id="qrcodeContainer">
         <div id="qrcode"></div>
     </div>
-
-
     <script>
         let paused = false;
         let passedTracks = [];
-        let maxTracksToPlay = Infinity; // Variable pour le nombre maximal de titres à jouer
-        let duration = 10 * 1000; // Durée entre les titres par défaut (10 secondes)
-        let pauseDuration = 5 * 1000; // Durée de pause entre les titres par défaut (5 secondes)
+        let maxTracksToPlay = Infinity;
+        let duration = 10 * 1000;
+        let pauseDuration = 5 * 1000;
 
         function getAccessTokenFromUrl() {
             const hash = window.location.hash;
@@ -265,84 +302,76 @@
         }
 
         function displayPlaylists(playlists) {
-        const container = document.getElementById('playlists');
-        container.innerHTML = ''; // Vide le contenu précédent
+            const container = document.getElementById('playlists');
+            container.innerHTML = '';
 
-        playlists.forEach(async (playlist) => {
-            const playlistElement = document.createElement('div');
-            playlistElement.classList.add('playlist');
+            playlists.forEach(async (playlist) => {
+                const playlistElement = document.createElement('div');
+                playlistElement.classList.add('playlist');
 
-            const img = document.createElement('img');
-            img.src = playlist.images[0]?.url || 'https://via.placeholder.com/100';
-            img.classList.add('playlist-image'); // Ajoutez une classe pour styliser l'image au besoin
-            img.addEventListener('click', async () => {
-                const tracksContainer = playlistElement.querySelector('.tracks');
-                if (tracksContainer.style.display === 'none' || tracksContainer.style.display === '') {
-                    tracksContainer.style.display = 'block';
+                const img = document.createElement('img');
+                img.src = playlist.images[0]?.url || 'https://via.placeholder.com/100';
+                img.classList.add('playlist-image');
+                img.addEventListener('click', async () => {
+                    const tracksContainer = playlistElement.querySelector('.tracks');
+                    if (tracksContainer.style.display === 'none' || tracksContainer.style.display === '') {
+                        tracksContainer.style.display = 'block';
+                        const accessToken = getAccessTokenFromUrl();
+                        const tracks = await fetchPlaylistTracks(playlist.id, accessToken);
+                        tracksContainer.innerHTML = '';
+                        tracks.forEach(trackItem => {
+                            const track = trackItem.track;
+                            const trackElement = document.createElement('div');
+                            trackElement.classList.add('track');
+                            trackElement.textContent = `${track.name} - ${track.artists.map(artist => artist.name).join(', ')}`;
+                            trackElement.dataset.previewUrl = track.preview_url;
+                            tracksContainer.appendChild(trackElement);
+                            tracksContainer.parentNode.insertBefore(playButton, tracksContainer);
+                        });
+                    } else {
+                        tracksContainer.style.display = 'none';
+                    }
+                });
+                playlistElement.appendChild(img);
+
+                const title = document.createElement('h2');
+                title.textContent = playlist.name;
+                playlistElement.appendChild(title);
+
+                const tracksContainer = document.createElement('div');
+                tracksContainer.classList.add('tracks');
+                playlistElement.appendChild(tracksContainer);
+
+                const playButton = document.createElement('button');
+                playButton.textContent = 'Lire en désordre';
+                playButton.addEventListener('click', async () => {
                     const accessToken = getAccessTokenFromUrl();
                     const tracks = await fetchPlaylistTracks(playlist.id, accessToken);
-                    tracksContainer.innerHTML = '';  // Clear previous tracks
-                    tracks.forEach(trackItem => {
-                        const track = trackItem.track;
-                        const trackElement = document.createElement('div');
-                        trackElement.classList.add('track');
-                        trackElement.textContent = `${track.name} - ${track.artists.map(artist => artist.name).join(', ')}`;
-                        trackElement.dataset.previewUrl = track.preview_url;
-                        tracksContainer.appendChild(trackElement);
-                        tracksContainer.parentNode.insertBefore(playButton, tracksContainer);
-                    });
-                } else {
-                    tracksContainer.style.display = 'none';
-                }
+                    playTracksInRandomOrder(tracks);
+                    hidePassedTracks();
+                });
+                playlistElement.appendChild(playButton);
+
+                container.appendChild(playlistElement);
             });
-            playlistElement.appendChild(img);
+        }
 
-            const title = document.createElement('h2');
-            title.textContent = playlist.name;
-            playlistElement.appendChild(title);
-
-            const tracksContainer = document.createElement('div');
-            tracksContainer.classList.add('tracks');
-            playlistElement.appendChild(tracksContainer);
-
-            // Créer et ajouter le bouton "Lire en désordre"
-            const playButton = document.createElement('button');
-            playButton.textContent = 'Lire en désordre';
-            playButton.addEventListener('click', async () => {
-                const accessToken = getAccessTokenFromUrl();
-                const tracks = await fetchPlaylistTracks(playlist.id, accessToken);
-                playTracksInRandomOrder(tracks);
-                hidePassedTracks(); // Cacher les titres passés avant de commencer la lecture aléatoire
-            });
-            playlistElement.appendChild(playButton);
-
-            container.appendChild(playlistElement);
-        });
-    }
-
-
-    function addPlayButton(tracksContainer, tracks) {
-            // Vérifier s'il existe déjà un bouton "Lire en désordre"
+        function addPlayButton(tracksContainer, tracks) {
             const existingButton = tracksContainer.parentNode.querySelector('.playButton');
-            
-            // Si un bouton existe déjà, le retirer avant d'ajouter un nouveau
             if (existingButton) {
                 existingButton.remove();
             }
-
             const playButton = document.createElement('button');
             playButton.textContent = 'Lire en désordre';
-            playButton.classList.add('playButton'); // Ajouter une classe pour identifier le bouton
+            playButton.classList.add('playButton');
 
             playButton.addEventListener('click', () => {
                 playTracksInRandomOrder(tracks);
-                hidePassedTracks(); // Cacher les titres passés avant de commencer la lecture aléatoire
+                hidePassedTracks();
             });
 
-            // Insérer le bouton avant les pistes de la playlist
             tracksContainer.parentNode.insertBefore(playButton, tracksContainer);
         }
-
 
         async function playTracksInRandomOrder(tracks) {
             resetPassedTracks();
@@ -357,26 +386,23 @@
                 const audioPlayer = document.getElementById('audioPlayer');
                 audioPlayer.src = track.preview_url;
                 audioPlayer.play();
-                hidePassedTracks(); // Cacher les titres passés avant de commencer la lecture aléatoire
+                hidePassedTracks();
 
-
-                // Ajouter une condition pour vérifier si la lecture est en pause
                 while (paused) {
-                    await sleep(100); // Attendre un court moment avant de vérifier à nouveau
+                    await sleep(100);
                 }
 
                 addToPassedTracks(trackName);
-                hidePassedTracks(); // Cacher les titres passés avant de commencer la lecture aléatoire
+                hidePassedTracks();
                 await sleep(duration);
                 if (!paused) {
                     audioPlayer.pause();
                     await sleep(pauseDuration);
                 } else {
-                    break; // Arrête la boucle si la lecture est en pause
+                    break;
                 }
             }
         }
-
 
         function updateMaxTracksToPlay() {
             const numTracksInput = document.getElementById('numTracksInput');
@@ -384,20 +410,18 @@
             const numTracksField = document.getElementById('numTracks');
             numTracksField.disabled = !numTracksInputValue;
             if (!numTracksInputValue) {
-                maxTracksToPlay = Infinity; // Si la case n'est pas cochée, jouer tous les titres
+                maxTracksToPlay = Infinity;
             } else {
-                maxTracksToPlay = parseInt(numTracksField.value, 10); // Sinon, jouer le nombre spécifié de titres
+                maxTracksToPlay = parseInt(numTracksField.value, 10);
             }
-            updateTimings(); // Mettre à jour les durées après avoir changé le nombre de titres à jouer
+            updateTimings();
 
-            // Afficher le message de validation
             const validationMessage = document.getElementById('validationMessage');
             validationMessage.style.display = 'block';
 
-            // Cacher le message après quelques secondes (facultatif)
             setTimeout(() => {
                 validationMessage.style.display = 'none';
-            }, 3000); // Affiche le message pendant 3 secondes
+            }, 3000);
         }
 
         function updateTimings() {
@@ -429,7 +453,7 @@
                 audioPlayer.pause();
                 pauseButton.textContent = 'Reprendre';
             } else {
-                audioPlayer.currentTime = 0; // Rembobine au début du morceau
+                audioPlayer.currentTime = 0;
                 audioPlayer.play();
                 pauseButton.textContent = 'Pause';
             }
@@ -440,18 +464,12 @@
             const settingsButton = document.getElementById('settingsButton');
             const settingsDivStyle = window.getComputedStyle(settingsDiv);
 
-            // Vérifie si les paramètres ne sont pas visibles
             if (settingsDivStyle.display === 'none') {
                 settingsDiv.style.display = 'block';
-
-                // Vérifier si les paramètres sont visibles sur l'écran
                 const isVisible = isElementInViewport(settingsDiv);
-
                 if (!isVisible) {
-                    // Faire défiler la page jusqu'aux paramètres
                     settingsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-                
                 settingsButton.textContent = 'Masquer les paramètres';
             } else {
                 settingsDiv.style.display = 'none';
@@ -464,19 +482,14 @@
             const settingsButton = document.getElementById('settingsButton');
             const settingsDivStyle = window.getComputedStyle(settingsDiv);
 
-            // Vérifie si les paramètres ne sont pas visibles
             if (settingsDivStyle.display === 'none') {
                 settingsDiv.style.display = 'block';
-
-                // Vérifier si les paramètres sont visibles sur l'écran
                 const isVisible = isElementInViewport(settingsDiv);
-
                 if (!isVisible) {
-                    // Faire défiler la page jusqu'aux paramètres avec une animation
-                    const startPosition = window.pageYOffset; // Position actuelle de défilement
-                    const targetPosition = settingsDiv.offsetTop; // Position cible des paramètres
-                    const distance = targetPosition - startPosition; // Distance à parcourir
-                    const duration = 500; // Durée de l'animation en millisecondes
+                    const startPosition = window.pageYOffset;
+                    const targetPosition = settingsDiv.offsetTop;
+                    const distance = targetPosition - startPosition;
+                    const duration = 500;
                     let start = null;
 
                     function step(timestamp) {
@@ -490,7 +503,6 @@
 
                     window.requestAnimationFrame(step);
                 }
-
                 settingsButton.textContent = 'Masquer les paramètres';
             } else {
                 settingsDiv.style.display = 'none';
@@ -498,7 +510,6 @@
             }
         }
 
-        // Fonction pour vérifier si un élément est visible à l'écran
         function isElementInViewport(element) {
             const rect = element.getBoundingClientRect();
 
@@ -510,14 +521,12 @@
             );
         }
 
-        // Fonction d'interpolation pour l'effet d'animation
         function easeInOutCubic(t, b, c, d) {
             t /= d / 2;
             if (t < 1) return c / 2 * t * t * t + b;
             t -= 2;
             return c / 2 * (t * t * t + 2) + b;
         }
-
 
         function addToPassedTracks(trackName) {
             passedTracks.push(trackName);
@@ -536,7 +545,6 @@
                 });
                 passedTracksList.appendChild(li);
             });
-            // Afficher le conteneur uniquement s'il y a des titres passés
             const passedTracksContainer = document.getElementById('passedTracks');
             passedTracksContainer.style.display = passedTracks.length > 0 ? 'block' : 'none';
         }
@@ -558,12 +566,9 @@
             document.getElementById('error').textContent = 'Erreur de connexion. Aucun token trouvé.';
         }
 
-        // Ajout de l'écouteur pour le bouton "Afficher les titres passés"
         document.addEventListener('DOMContentLoaded', function() {
             const showPassedTracksButton = document.getElementById('showPassedTracksButton');
             const passedTracksContainer = document.getElementById('passedTracks');
-
-            // Cacher le conteneur des titres passés au chargement initial de la page
             passedTracksContainer.style.display = 'none';
 
             showPassedTracksButton.addEventListener('click', function() {
@@ -575,42 +580,35 @@
                     showPassedTracksButton.textContent = 'Afficher les titres passés';
                 }
             });
-            // Initialisation de maxTracksToPlay au chargement de la page
             updateMaxTracksToPlay();
         });
     </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-    // Code JavaScript pour générer et afficher le QR code
-    // Génération dynamique de l'URL avec un identifiant unique (par exemple, une clé aléatoire)
-    const uniqueId = generateUniqueId(); // Fonction à définir pour générer un ID unique
-    const qrCodeUrl = `${window.location.origin}/responses.html?id=${uniqueId}`;
-
-    const qrcode = new QRCode(document.getElementById("qrcode"), {
-        text: qrCodeUrl,
-        width: 128,
-        height: 128,
-        correctLevel: QRCode.CorrectLevel.H
-    });
-
-    // Récupération du conteneur du QR code
-    const qrcodeContainer = document.getElementById('qrcodeContainer');
-
-    // Récupération du bouton pour afficher le QR code (similaire aux autres boutons)
-    const controls = document.getElementById('controls');
-    const showQRCodeButton = document.createElement('button');
-    showQRCodeButton.textContent = 'Afficher QR Code';
-    showQRCodeButton.addEventListener('click', function() {
-        // Afficher ou masquer le QR code
-        if (qrcodeContainer.style.display === 'none') {
-            qrcodeContainer.style.display = 'block';
-        } else {
-            qrcodeContainer.style.display = 'none';
-        }
-    });
-    controls.appendChild(showQRCodeButton);
-</script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        const uniqueId = Math.random().toString(36).substr(2, 9);
+        const qrCodeUrl = `${window.location.origin}/responses.html?id=${uniqueId}`;
+    
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: qrCodeUrl,
+            width: 128,
+            height: 128,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    
+        const qrcodeContainer = document.getElementById('qrcodeContainer');
+        const controls = document.getElementById('controls');
+        const showQRCodeButton = document.createElement('button');
+        showQRCodeButton.textContent = 'Afficher QR Code';
+        showQRCodeButton.addEventListener('click', function() {
+            if (qrcodeContainer.style.display === 'none') {
+                qrcodeContainer.style.display = 'block';
+            } else {
+                qrcodeContainer.style.display = 'none';
+            }
+        });
+        controls.appendChild(showQRCodeButton);
+    </script>
+    
 </body>
 </html>
