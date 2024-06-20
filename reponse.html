@@ -74,21 +74,30 @@
             const urlParams = new URLSearchParams(window.location.search);
             const participantId = urlParams.get('id');
 
+            if (!participantId) {
+                message.textContent = 'ID de participant manquant.';
+                message.style.color = 'red';
+                message.style.display = 'block';
+                return;
+            }
+
             try {
-                const response = await fetch(`/save-response?id=${participantId}`, {
+                const response = await fetch('/save-response', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ artist, track })
+                    body: JSON.stringify({ id: participantId, artist, track })
                 });
 
                 if (response.ok) {
                     message.textContent = 'Réponse enregistrée avec succès !';
+                    message.style.color = 'green';
                     message.style.display = 'block';
                     form.reset();
                 } else {
-                    throw new Error('Erreur lors de l\'enregistrement de la réponse.');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erreur lors de l\'enregistrement de la réponse.');
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi de la requête:', error);
