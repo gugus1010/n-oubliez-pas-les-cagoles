@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devinez la chanson</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        #guessForm {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        #guessForm label, #guessForm input, #guessForm button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        #guessForm input, #guessForm button {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #guessForm button {
+            background-color: #1db954;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #guessForm button:hover {
+            background-color: #17a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Devinez la chanson en cours</h1>
+    <form id="guessForm">
+        <label for="guess">Votre réponse :</label>
+        <input type="text" id="guess" name="guess" required>
+        <button type="submit">Soumettre</button>
+    </form>
+    <div id="feedback"></div>
+
+    <script>
+        document.getElementById('guessForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const guess = document.getElementById('guess').value;
+            // Envoyer la réponse au serveur ou traiter localement
+            document.getElementById('feedback').textContent = 'Merci pour votre réponse !';
+            document.getElementById('guess').value = '';
+        });
+    </script>
+</body>
+</html>
