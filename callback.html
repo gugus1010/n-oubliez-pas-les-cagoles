@@ -208,6 +208,8 @@
         <button id="pauseButton" onclick="togglePause()">Pause</button>
         <button id="settingsButton" onclick="smoothScroll('settings')">Paramètres</button>
         <button id="showPassedTracksButton">Afficher les titres passés</button>
+        <button id="leaderboardButton">Voir le leaderboard</button>
+
     </div>
     <div id="error"></div>
     <div id="settings" style="display: none;">
@@ -582,12 +584,17 @@
             });
             updateMaxTracksToPlay();
         });
+        const leaderboardButton = document.getElementById('leaderboardButton');
+        leaderboardButton.addEventListener('click', function() {
+            window.location.href = `http://gugus1010.github.io/n-oubliez-pas-les-cagoles/leaderboard.html`; // Remplacez 'leaderboard.html' par le chemin de votre page leaderboard
+        });
+
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         const uniqueId = Math.random().toString(36).substr(2, 9);
-        const qrCodeUrl = `${window.location.origin}/responses.html?id=${uniqueId}`;
+        const qrCodeUrl = `http://gugus1010.github.io/n-oubliez-pas-les-cagoles/responses.html?id=${uniqueId}`;
     
         const qrcode = new QRCode(document.getElementById("qrcode"), {
             text: qrCodeUrl,
