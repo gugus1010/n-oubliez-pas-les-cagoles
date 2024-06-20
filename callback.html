@@ -144,6 +144,14 @@
         #resetButton:hover {
             background-color: #d32f2f;
         }
+        #qrcodeContainer {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            text-align: center;
+            display: none; /* Cache le QR code initialement */
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
@@ -153,6 +161,7 @@
     <div id="validationMessage" style="display: none;">
         Paramètres mis à jour avec succès!
     </div>
+    
     
     <div id="controls">
         <button id="pauseButton" onclick="togglePause()">Pause</button>
@@ -184,6 +193,11 @@
         <h2>Titres passés</h2>
         <ul id="passedTracksList"></ul>
         <button id="resetButton" onclick="resetPassedTracks()">Effacer la liste</button>
+    </div>
+
+
+    <div id="qrcodeContainer">
+        <div id="qrcode"></div>
     </div>
 
 
@@ -565,5 +579,35 @@
             updateMaxTracksToPlay();
         });
     </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    // Code JavaScript pour générer et afficher le QR code
+    const qrCodeUrl = window.location.origin + '/responses.html';
+    const qrcode = new QRCode(document.getElementById("qrcode"), {
+        text: qrCodeUrl,
+        width: 128,
+        height: 128,
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+    // Récupération du conteneur du QR code
+    const qrcodeContainer = document.getElementById('qrcodeContainer');
+
+    // Récupération du bouton pour afficher le QR code (similaire aux autres boutons)
+    const controls = document.getElementById('controls');
+    const showQRCodeButton = document.createElement('button');
+    showQRCodeButton.textContent = 'Afficher QR Code';
+    showQRCodeButton.addEventListener('click', function() {
+        // Afficher ou masquer le QR code
+        if (qrcodeContainer.style.display === 'none') {
+            qrcodeContainer.style.display = 'block';
+        } else {
+            qrcodeContainer.style.display = 'none';
+        }
+    });
+    controls.appendChild(showQRCodeButton);
+</script>
+
 </body>
 </html>
