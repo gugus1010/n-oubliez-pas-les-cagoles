@@ -1,61 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Devinez la chanson</title>
+    <title>Réponses du Participant</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             padding: 20px;
+            text-align: center;
         }
-        #guessForm {
+        h1 {
+            color: #333;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
             background-color: #fff;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            margin: 0 auto;
         }
-        #guessForm label, #guessForm input, #guessForm button {
+        label {
             display: block;
-            width: 100%;
             margin-bottom: 10px;
+            font-weight: bold;
         }
-        #guessForm input, #guessForm button {
+        input[type="text"] {
+            width: calc(100% - 20px);
             padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
-        #guessForm button {
+        input[type="submit"] {
             background-color: #1db954;
-            color: white;
+            color: #fff;
             border: none;
+            padding: 10px 20px;
             cursor: pointer;
+            border-radius: 4px;
             transition: background-color 0.3s ease;
         }
-        #guessForm button:hover {
+        input[type="submit"]:hover {
             background-color: #17a049;
+        }
+        .message {
+            margin-top: 20px;
+            color: green;
         }
     </style>
 </head>
 <body>
-    <h1>Devinez la chanson en cours</h1>
-    <form id="guessForm">
-        <label for="guess">Votre réponse :</label>
-        <input type="text" id="guess" name="guess" required>
-        <button type="submit">Soumettre</button>
+    <h1>Répondez à la question</h1>
+    <form id="responseForm">
+        <label for="artist">Nom de l'artiste :</label>
+        <input type="text" id="artist" name="artist" required>
+        <label for="track">Nom de la musique :</label>
+        <input type="text" id="track" name="track" required>
+        <input type="submit" value="Envoyer">
     </form>
-    <div id="feedback"></div>
+    <div class="message" id="responseMessage" style="display: none;"></div>
 
     <script>
-        document.getElementById('guessForm').addEventListener('submit', function(event) {
+        const form = document.getElementById('responseForm');
+        const message = document.getElementById('responseMessage');
+
+        form.addEventListener('submit', async function(event) {
             event.preventDefault();
-            const guess = document.getElementById('guess').value;
-            // Envoyer la réponse au serveur ou traiter localement
-            document.getElementById('feedback').textContent = 'Merci pour votre réponse !';
-            document.getElementById('guess').value = '';
+            const artist = document.getElementById('artist').value.trim();
+            const track = document.getElementById('track').value.trim();
+            const urlParams = new URLSearchParams(window.location.search);
+            const participantId = urlParams.get('id');
+
+            try {
+                const response = await fetch(`/save-response?id=${participantId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ artist, track })
+                });
+
+                if (response.ok) {
+                    message.textContent = 'Réponse enregistrée avec succès !';
+                    message.style.display = 'block';
+                    form.reset();
+                } else {
+                    throw new Error('Erreur lors de l\'enregistrement de la réponse.');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi de la requête:', error);
+                message.textContent = 'Erreur lors de l\'enregistrement de la réponse.';
+                message.style.color = 'red';
+                message.style.display = 'block';
+            }
         });
     </script>
 </body>
