@@ -1,4 +1,3 @@
-<!-- leaderboard.html -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -49,13 +48,14 @@
             </tr>
         </thead>
         <tbody>
+            <!-- Ce tbody sera rempli dynamiquement par JavaScript -->
         </tbody>
     </table>
 
     <script>
         async function fetchLeaderboard() {
             try {
-                const response = await fetch('/leaderboard');
+                const response = await fetch(''http://gugus1010.github.io/n-oubliez-pas-les-cagoles/serveur.js''); // Mettez ici l'URL de votre serveur local
                 const data = await response.json();
                 const tbody = document.querySelector('#leaderboard tbody');
                 tbody.innerHTML = '';
