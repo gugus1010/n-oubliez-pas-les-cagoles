@@ -71,23 +71,15 @@
             event.preventDefault();
             const artist = document.getElementById('artist').value.trim();
             const track = document.getElementById('track').value.trim();
-            const urlParams = new URLSearchParams(window.location.search);
-            const participantId = urlParams.get('id');
-
-            if (!participantId) {
-                message.textContent = 'ID de participant manquant.';
-                message.style.color = 'red';
-                message.style.display = 'block';
-                return;
-            }
+            const url = ''http://gugus1010.github.io/n-oubliez-pas-les-cagoles/serveur.js''; // Mettez ici l'URL de votre serveur local
 
             try {
-                const response = await fetch('/save-response', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ id: participantId, artist, track })
+                    body: JSON.stringify({ artist, track })
                 });
 
                 if (response.ok) {
