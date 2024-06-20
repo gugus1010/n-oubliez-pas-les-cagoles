@@ -583,7 +583,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
     // Code JavaScript pour générer et afficher le QR code
-    const qrCodeUrl ='https://gugus1010.github.io/n-oubliez-pas-les-cagoles/reponse.html';
+    // Génération dynamique de l'URL avec un identifiant unique (par exemple, une clé aléatoire)
+    const uniqueId = generateUniqueId(); // Fonction à définir pour générer un ID unique
+    const qrCodeUrl = `${window.location.origin}/responses.html?id=${uniqueId}`;
+
     const qrcode = new QRCode(document.getElementById("qrcode"), {
         text: qrCodeUrl,
         width: 128,
