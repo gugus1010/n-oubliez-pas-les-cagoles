@@ -95,12 +95,13 @@
                     errorMessage.style.display = 'none';
                     form.reset();
                 } else {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Erreur lors de l\'enregistrement de la réponse.');
+                    // Si la réponse n'est pas en JSON, affichez le message d'erreur brut
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Erreur lors de l\'enregistrement de la réponse.');
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi de la requête:', error);
-                errorMessage.textContent = 'Erreur lors de l\'enregistrement de la réponse.';
+                errorMessage.textContent = error.message || 'Erreur lors de l\'enregistrement de la réponse.';
                 errorMessage.style.display = 'block';
                 message.style.display = 'none';
             }
