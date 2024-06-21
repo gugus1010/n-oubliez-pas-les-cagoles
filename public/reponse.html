@@ -72,13 +72,13 @@
         const form = document.getElementById('responseForm');
         const message = document.getElementById('responseMessage');
         const errorMessage = document.getElementById('errorMessage');
-
+    
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
             const artist = document.getElementById('artist').value.trim();
             const track = document.getElementById('track').value.trim();
             const url = 'https://n-oubliez-pas-les-cagoles.vercel.app/save-response'; // Mettez ici l'URL de votre endpoint save-response sur Vercel
-
+    
             try {
                 const response = await fetch(url, {
                     method: 'POST',
@@ -87,7 +87,7 @@
                     },
                     body: JSON.stringify({ artist, track })
                 });
-
+    
                 if (response.ok) {
                     message.textContent = 'Réponse enregistrée avec succès !';
                     message.style.color = 'green';
@@ -107,5 +107,6 @@
             }
         });
     </script>
+
 </body>
 </html>
