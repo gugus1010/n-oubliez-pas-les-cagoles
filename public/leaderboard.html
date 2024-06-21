@@ -55,7 +55,7 @@
     <script>
         async function fetchLeaderboard() {
             try {
-                const response = await fetch('https://n-oubliez-pas-les-cagoles.vercel.app/leaderboard.html'); // Mettez ici l'URL de votre endpoint leaderboard sur Vercel
+                const response = await fetch('https://n-oubliez-pas-les-cagoles.vercel.app/api/leaderboard.html'); // Mettez ici l'URL de votre endpoint leaderboard sur Vercel
                 const data = await response.json();
                 const tbody = document.querySelector('#leaderboard tbody');
                 tbody.innerHTML = '';
