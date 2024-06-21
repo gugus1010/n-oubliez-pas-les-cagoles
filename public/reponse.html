@@ -77,7 +77,7 @@
             event.preventDefault();
             const artist = document.getElementById('artist').value.trim();
             const track = document.getElementById('track').value.trim();
-            const url = 'https://n-oubliez-pas-les-cagoles.vercel.app/save-response'; // Mettez ici l'URL de votre endpoint save-response sur Vercel
+            const url = 'https://n-oubliez-pas-les-cagoles.vercel.app/api/save-response'; // Mettez ici l'URL de votre endpoint save-response sur Vercel
     
             try {
                 const response = await fetch(url, {
