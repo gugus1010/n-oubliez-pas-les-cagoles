@@ -586,7 +586,7 @@
         });
         const leaderboardButton = document.getElementById('leaderboardButton');
         leaderboardButton.addEventListener('click', function() {
-            window.open(`http://gugus1010.github.io/n-oubliez-pas-les-cagoles/leaderboard.html`, '_blank');
+            window.open(`https://n-oubliez-pas-les-cagoles.vercel.app/leaderboard.html`, '_blank');
         });
 
 
@@ -595,7 +595,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         const uniqueId = Math.random().toString(36).substr(2, 9);
-        const qrCodeUrl = `http://gugus1010.github.io/n-oubliez-pas-les-cagoles/reponse.html?id=${uniqueId}`;
+        const qrCodeUrl = `https://n-oubliez-pas-les-cagoles.vercel.app/reponse.html?id=${uniqueId}`;
     
         const qrcode = new QRCode(document.getElementById("qrcode"), {
             text: qrCodeUrl,
