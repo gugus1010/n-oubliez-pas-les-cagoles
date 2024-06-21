@@ -50,6 +50,10 @@
             margin-top: 20px;
             color: green;
         }
+        .error-message {
+            margin-top: 20px;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -62,16 +66,18 @@
         <input type="submit" value="Envoyer">
     </form>
     <div class="message" id="responseMessage" style="display: none;"></div>
+    <div class="error-message" id="errorMessage" style="display: none;"></div>
 
     <script>
         const form = document.getElementById('responseForm');
         const message = document.getElementById('responseMessage');
+        const errorMessage = document.getElementById('errorMessage');
 
         form.addEventListener('submit', async function(event) {
             event.preventDefault();
             const artist = document.getElementById('artist').value.trim();
             const track = document.getElementById('track').value.trim();
-            const url = 'https://n-oubliez-pas-les-cagoles.vercel.app/serveur.js'; // Mettez ici l'URL de votre serveur local
+            const url = 'https://votre-projet.vercel.app/save-response'; // Mettez ici l'URL de votre endpoint save-response sur Vercel
 
             try {
                 const response = await fetch(url, {
@@ -86,6 +92,7 @@
                     message.textContent = 'Réponse enregistrée avec succès !';
                     message.style.color = 'green';
                     message.style.display = 'block';
+                    errorMessage.style.display = 'none';
                     form.reset();
                 } else {
                     const errorData = await response.json();
@@ -93,9 +100,9 @@
                 }
             } catch (error) {
                 console.error('Erreur lors de l\'envoi de la requête:', error);
-                message.textContent = 'Erreur lors de l\'enregistrement de la réponse.';
-                message.style.color = 'red';
-                message.style.display = 'block';
+                errorMessage.textContent = 'Erreur lors de l\'enregistrement de la réponse.';
+                errorMessage.style.display = 'block';
+                message.style.display = 'none';
             }
         });
     </script>
