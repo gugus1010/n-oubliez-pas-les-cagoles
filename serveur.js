@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Utilisation du port fourni par l'environnement ou 3000 par défaut
 
 let responses = [];
 
