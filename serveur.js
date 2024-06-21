@@ -14,6 +14,7 @@ app.use(cors());
 app.post('/save-response', (req, res) => {
     const { artist, track } = req.body;
     if (artist && track) {
+        // Gestion de l'ID simulée pour le leaderboard
         const id = responses.length + 1;
         responses.push({ id, artist, track });
         res.status(200).json({ message: 'Réponse enregistrée avec succès !' });
