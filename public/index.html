@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion à Spotify</title>
+    <title>Connexion à Spotify et Deezer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,17 +30,24 @@
         button {
             padding: 10px 20px;
             font-size: 1rem;
-            background-color: #1db954;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            margin: 5px;
         }
-        button:hover {
+        .spotify {
+            background-color: #1db954;
+        }
+        .spotify:hover {
             background-color: #169c4d;
+        }
+        .deezer {
+            background-color: #ef5466;
+        }
+        .deezer:hover {
+            background-color: #e23c50;
         }
         button:active {
             animation: clickAnimation 0.5s ease-out;
@@ -57,18 +64,30 @@
 </head>
 <body>
     <div class="container">
-        <h1>Connexion à Spotify</h1>
-        <button onclick="loginWithSpotify()">Se connecter avec Spotify</button>
+        <h1>Connexion à Spotify et Deezer</h1>
+        <button class="spotify" onclick="loginWithSpotify()">Se connecter avec Spotify</button>
+        <button class="deezer" onclick="loginWithDeezer()">Se connecter avec Deezer</button>
     </div>
 
     <script>
-        const clientId = 'bc84478e0d1d4102857e19116b8e5a16';  // Remplacez par votre Client ID
-        const redirectUri = 'https://n-oubliez-pas-les-cagoles.vercel.app/callback.html';  // URI de redirection configurée
-        const scopes = 'playlist-read-private playlist-read-collaborative';  // Scopes nécessaires
+        // Spotify
+        const spotifyClientId = 'bc84478e0d1d4102857e19116b8e5a16';  // Remplacez par votre Client ID Spotify
+        const spotifyRedirectUri = 'https://n-oubliez-pas-les-cagoles.vercel.app/callback.html';  // URI de redirection configurée pour Spotify
+        const spotifyScopes = 'playlist-read-private playlist-read-collaborative';  // Scopes nécessaires pour Spotify
 
         function loginWithSpotify() {
             const authUrl = 'https://accounts.spotify.com/authorize';
-            const url = `${authUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&response_type=token&show_dialog=true`;
+            const url = `${authUrl}?client_id=${spotifyClientId}&redirect_uri=${encodeURIComponent(spotifyRedirectUri)}&scope=${encodeURIComponent(spotifyScopes)}&response_type=token&show_dialog=true`;
+            window.location.href = url;
+        }
+
+        // Deezer
+        const deezerAppId = 'YOUR_DEEZER_APP_ID';  // Remplacez par votre App ID Deezer
+        const deezerRedirectUri = 'https://n-oubliez-pas-les-cagoles.vercel.app/callback.html';  // URI de redirection configurée pour Deezer
+
+        function loginWithDeezer() {
+            const authUrl = 'https://connect.deezer.com/oauth/auth.php';
+            const url = `${authUrl}?app_id=${deezerAppId}&redirect_uri=${encodeURIComponent(deezerRedirectUri)}&perms=basic_access,email&response_type=token`;
             window.location.href = url;
         }
     </script>
