@@ -77,7 +77,7 @@
 
         function loginWithSpotify() {
             const authUrl = 'https://accounts.spotify.com/authorize';
-            const url = `${authUrl}?client_id=${spotifyClientId}&redirect_uri=${encodeURIComponent(spotifyRedirectUri)}&scope=${encodeURIComponent(spotifyScopes)}&response_type=token&show_dialog=true`;
+            const url = `${authUrl}?client_id=${spotifyClientId}&redirect_uri=${encodeURIComponent(spotifyRedirectUri + '?service=spotify')}&scope=${encodeURIComponent(spotifyScopes)}&response_type=token&show_dialog=true`;
             window.location.href = url;
         }
 
@@ -87,7 +87,7 @@
 
         function loginWithDeezer() {
             const authUrl = 'https://connect.deezer.com/oauth/auth.php';
-            const url = `${authUrl}?app_id=${deezerAppId}&redirect_uri=${encodeURIComponent(deezerRedirectUri)}&perms=basic_access,email&response_type=token`;
+            const url = `${authUrl}?app_id=${deezerAppId}&redirect_uri=${encodeURIComponent(deezerRedirectUri + '?service=deezer')}&perms=basic_access,email&response_type=token`;
             window.location.href = url;
         }
     </script>
