@@ -207,8 +207,8 @@
     <div id="controls">
         <button id="pauseButton" onclick="togglePause()">Pause</button>
         <button id="settingsButton" onclick="smoothScroll('settings')">Paramètres</button>
-        <button id="showPassedTracksButton" onclick="showPassedTracks()">Afficher les titres passés</button>
-        <button id="leaderboardButton" onclick="showLeaderboard()">Voir le leaderboard</button>
+        <button id="showPassedTracksButton">Afficher les titres passés</button>
+        <button id="leaderboardButton">Voir le leaderboard</button>
     </div>
     <div id="error"></div>
     <div id="settings" style="display: none;">
@@ -229,7 +229,6 @@
         let maxTracksToPlay = Infinity;
         let duration = 10 * 1000;
         let pauseDuration = 5 * 1000;
-        let service = '';
 
         function getAccessTokenFromUrl() {
             const hash = window.location.hash;
@@ -254,8 +253,7 @@
             }
         }
 
-        async function fetchUserPlaylists(accessToken) {
-            service = detectServiceFromToken(accessToken);
+        async function fetchUserPlaylists(accessToken, service) {
             const loadingElement = document.getElementById('loading');
             const errorElement = document.getElementById('error');
             try {
@@ -278,7 +276,7 @@
                 loadingElement.style.display = 'none';
                 if (response.ok) {
                     const data = await response.json();
-                    displayPlaylists(data.items || data.data);
+                    displayPlaylists(data.items || data.data, service);
                 } else {
                     throw new Error('Erreur lors de la récupération des playlists');
                 }
@@ -289,19 +287,19 @@
             }
         }
 
-        async function fetchPlaylistTracks(playlistId) {
+        async function fetchPlaylistTracks(playlistId, accessToken, service) {
             try {
                 let response;
                 if (service === 'spotify') {
                     response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
                         headers: {
-                            'Authorization': 'Bearer ' + getAccessTokenFromUrl()
+                            'Authorization': 'Bearer ' + accessToken
                         }
                     });
                 } else if (service === 'deezer') {
                     response = await fetch(`https://api.deezer.com/playlist/${playlistId}/tracks`, {
                         headers: {
-                            'Authorization': 'Bearer ' + getAccessTokenFromUrl()
+                            'Authorization': 'Bearer ' + accessToken
                         }
                     });
                 }
@@ -317,7 +315,7 @@
             }
         }
 
-        function displayPlaylists(playlists) {
+        function displayPlaylists(playlists, service) {
             const container = document.getElementById('playlists');
             container.innerHTML = '';
 
@@ -333,7 +331,7 @@
                     if (tracksContainer.style.display === 'none' || tracksContainer.style.display === '') {
                         tracksContainer.style.display = 'block';
                         const accessToken = getAccessTokenFromUrl();
-                        const tracks = await fetchPlaylistTracks(playlist.id);
+                        const tracks = await fetchPlaylistTracks(playlist.id, accessToken, service);
                         tracksContainer.innerHTML = '';
                         tracks.forEach(track => {
                             const trackElement = document.createElement('div');
@@ -360,7 +358,7 @@
                 playButton.textContent = 'Lire en désordre';
                 playButton.addEventListener('click', async () => {
                     const accessToken = getAccessTokenFromUrl();
-                    const tracks = await fetchPlaylistTracks(playlist.id);
+                    const tracks = await fetchPlaylistTracks(playlist.id, accessToken, service);
                     playTracksInRandomOrder(tracks);
                     hidePassedTracks();
                 });
