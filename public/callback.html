@@ -198,7 +198,7 @@
     </style>
 </head>
 <body>
-    <h1>Playlists</h1>
+    <h1>Playlists de Spotify</h1>
     <div id="loading">Chargement des playlists...</div>
     <div id="playlists"></div>
     <div id="validationMessage" style="display: none;">
@@ -209,10 +209,27 @@
         <button id="settingsButton" onclick="smoothScroll('settings')">Paramètres</button>
         <button id="showPassedTracksButton">Afficher les titres passés</button>
         <button id="leaderboardButton">Voir le leaderboard</button>
+
     </div>
     <div id="error"></div>
     <div id="settings" style="display: none;">
-        <!-- Formulaire de paramètres -->
+        <div class="form-group">
+            <input type="checkbox" id="numTracksInput" onchange="updateMaxTracksToPlay()">
+            <label for="numTracksInput">Lire un nombre spécifique de titres :</label>
+        </div>
+        <input type="number" id="numTracks" min="1" value="10" disabled>
+        <br>
+        <label>
+            Durée entre les titres (en secondes) :
+            <input type="number" id="durationInput" min="1" value="10">
+        </label>
+        <br>
+        <label>
+            Durée de pause entre les titres (en secondes) :
+            <input type="number" id="pauseDurationInput" min="1" value="5">
+        </label>
+        <br>
+        <button id="updateMaxTracksButton" onclick="updateMaxTracksToPlay()">Valider</button>
     </div>
     <audio id="audioPlayer" controls></audio>
     <div id="passedTracks">
@@ -242,41 +259,21 @@
             return null;
         }
 
-        function detectServiceFromToken(token) {
-            // Ajoutez une logique pour déterminer si le token est pour Spotify ou Deezer
-            // Par exemple, en vérifiant le format du token ou en utilisant des endpoints spécifiques
-            // Supposons qu'on vérifie si le token contient un préfixe spécifique pour Deezer
-            if (token.startsWith('deezer_')) {
-                return 'deezer';
-            } else {
-                return 'spotify';
-            }
-        }
-
-        async function fetchUserPlaylists(accessToken, service) {
+        async function fetchUserPlaylists(accessToken) {
             const loadingElement = document.getElementById('loading');
             const errorElement = document.getElementById('error');
             try {
                 loadingElement.style.display = 'block';
                 errorElement.textContent = '';
-                let response;
-                if (service === 'spotify') {
-                    response = await fetch('https://api.spotify.com/v1/me/playlists', {
-                        headers: {
-                            'Authorization': 'Bearer ' + accessToken
-                        }
-                    });
-                } else if (service === 'deezer') {
-                    response = await fetch('https://api.deezer.com/user/me/playlists', {
-                        headers: {
-                            'Authorization': 'Bearer ' + accessToken
-                        }
-                    });
-                }
+                const response = await fetch('https://api.spotify.com/v1/me/playlists', {
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                });
                 loadingElement.style.display = 'none';
                 if (response.ok) {
                     const data = await response.json();
-                    displayPlaylists(data.items || data.data, service);
+                    displayPlaylists(data.items);
                 } else {
                     throw new Error('Erreur lors de la récupération des playlists');
                 }
@@ -287,25 +284,16 @@
             }
         }
 
-        async function fetchPlaylistTracks(playlistId, accessToken, service) {
+        async function fetchPlaylistTracks(playlistId, accessToken) {
             try {
-                let response;
-                if (service === 'spotify') {
-                    response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
-                        headers: {
-                            'Authorization': 'Bearer ' + accessToken
-                        }
-                    });
-                } else if (service === 'deezer') {
-                    response = await fetch(`https://api.deezer.com/playlist/${playlistId}/tracks`, {
-                        headers: {
-                            'Authorization': 'Bearer ' + accessToken
-                        }
-                    });
-                }
+                const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + accessToken
+                    }
+                });
                 if (response.ok) {
                     const data = await response.json();
-                    return data.items || data.data;
+                    return data.items;
                 } else {
                     throw new Error('Erreur lors de la récupération des pistes de la playlist');
                 }
@@ -315,7 +303,7 @@
             }
         }
 
-        function displayPlaylists(playlists, service) {
+        function displayPlaylists(playlists) {
             const container = document.getElementById('playlists');
             container.innerHTML = '';
 
@@ -324,21 +312,23 @@
                 playlistElement.classList.add('playlist');
 
                 const img = document.createElement('img');
-                img.src = (service === 'spotify' ? playlist.images[0]?.url : playlist.picture_medium) || 'https://via.placeholder.com/100';
+                img.src = playlist.images[0]?.url || 'https://via.placeholder.com/100';
                 img.classList.add('playlist-image');
                 img.addEventListener('click', async () => {
                     const tracksContainer = playlistElement.querySelector('.tracks');
                     if (tracksContainer.style.display === 'none' || tracksContainer.style.display === '') {
                         tracksContainer.style.display = 'block';
                         const accessToken = getAccessTokenFromUrl();
-                        const tracks = await fetchPlaylistTracks(playlist.id, accessToken, service);
+                        const tracks = await fetchPlaylistTracks(playlist.id, accessToken);
                         tracksContainer.innerHTML = '';
-                        tracks.forEach(track => {
+                        tracks.forEach(trackItem => {
+                            const track = trackItem.track;
                             const trackElement = document.createElement('div');
                             trackElement.classList.add('track');
-                            trackElement.textContent = (service === 'spotify') ? `${track.track.name} - ${track.track.artists.map(artist => artist.name).join(', ')}` : `${track.title} - ${track.artist.name}`;
-                            trackElement.dataset.previewUrl = (service === 'spotify') ? track.track.preview_url : track.preview;
+                            trackElement.textContent = `${track.name} - ${track.artists.map(artist => artist.name).join(', ')}`;
+                            trackElement.dataset.previewUrl = track.preview_url;
                             tracksContainer.appendChild(trackElement);
+                            tracksContainer.parentNode.insertBefore(playButton, tracksContainer);
                         });
                     } else {
                         tracksContainer.style.display = 'none';
@@ -347,7 +337,7 @@
                 playlistElement.appendChild(img);
 
                 const title = document.createElement('h2');
-                title.textContent = (service === 'spotify') ? playlist.name : playlist.title;
+                title.textContent = playlist.name;
                 playlistElement.appendChild(title);
 
                 const tracksContainer = document.createElement('div');
@@ -358,7 +348,7 @@
                 playButton.textContent = 'Lire en désordre';
                 playButton.addEventListener('click', async () => {
                     const accessToken = getAccessTokenFromUrl();
-                    const tracks = await fetchPlaylistTracks(playlist.id, accessToken, service);
+                    const tracks = await fetchPlaylistTracks(playlist.id, accessToken);
                     playTracksInRandomOrder(tracks);
                     hidePassedTracks();
                 });
@@ -368,7 +358,24 @@
             });
         }
 
-        function playTracksInRandomOrder(tracks) {
+        function addPlayButton(tracksContainer, tracks) {
+            const existingButton = tracksContainer.parentNode.querySelector('.playButton');
+            if (existingButton) {
+                existingButton.remove();
+            }
+            const playButton = document.createElement('button');
+            playButton.textContent = 'Lire en désordre';
+            playButton.classList.add('playButton');
+
+            playButton.addEventListener('click', () => {
+                playTracksInRandomOrder(tracks);
+                hidePassedTracks();
+            });
+
+            tracksContainer.parentNode.insertBefore(playButton, tracksContainer);
+        }
+
+        async function playTracksInRandomOrder(tracks) {
             resetPassedTracks();
             const shuffledTracks = shuffleArray(tracks.slice());
             let tracksToPlay = shuffledTracks;
@@ -376,10 +383,10 @@
                 tracksToPlay = shuffledTracks.slice(0, maxTracksToPlay);
             }
             for (let i = 0; i < tracksToPlay.length; i++) {
-                const track = tracksToPlay[i];
-                const trackName = (service === 'spotify') ? `${track.track.name} - ${track.track.artists.map(artist => artist.name).join(', ')}` : `${track.title} - ${track.artist.name}`;
+                const track = tracksToPlay[i].track;
+                const trackName = `${track.name} - ${track.artists.map(artist => artist.name).join(', ')}`;
                 const audioPlayer = document.getElementById('audioPlayer');
-                audioPlayer.src = (service === 'spotify') ? track.track.preview_url : track.preview;
+                audioPlayer.src = track.preview_url;
                 audioPlayer.play();
                 hidePassedTracks();
 
@@ -399,38 +406,217 @@
             }
         }
 
-        // Les autres fonctions (togglePause, smoothScroll, etc.) restent inchangées.
+        function updateMaxTracksToPlay() {
+            const numTracksInput = document.getElementById('numTracksInput');
+            const numTracksInputValue = numTracksInput.checked;
+            const numTracksField = document.getElementById('numTracks');
+            numTracksField.disabled = !numTracksInputValue;
+            if (!numTracksInputValue) {
+                maxTracksToPlay = Infinity;
+            } else {
+                maxTracksToPlay = parseInt(numTracksField.value, 10);
+            }
+            updateTimings();
+
+            const validationMessage = document.getElementById('validationMessage');
+            validationMessage.style.display = 'block';
+
+            setTimeout(() => {
+                validationMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateTimings() {
+            duration = parseInt(document.getElementById('durationInput').value, 10) * 1000;
+            pauseDuration = parseInt(document.getElementById('pauseDurationInput').value, 10) * 1000;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function shuffleArray(array) {
+            let currentIndex = array.length, temporaryValue, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+            return array;
+        }
+
+        function togglePause() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const pauseButton = document.getElementById('pauseButton');
+            paused = !paused;
+            if (paused) {
+                audioPlayer.pause();
+                pauseButton.textContent = 'Reprendre';
+            } else {
+                audioPlayer.currentTime = 0;
+                audioPlayer.play();
+                pauseButton.textContent = 'Pause';
+            }
+        }
+
+        function toggleSettings() {
+            const settingsDiv = document.getElementById('settings');
+            const settingsButton = document.getElementById('settingsButton');
+            const settingsDivStyle = window.getComputedStyle(settingsDiv);
+
+            if (settingsDivStyle.display === 'none') {
+                settingsDiv.style.display = 'block';
+                const isVisible = isElementInViewport(settingsDiv);
+                if (!isVisible) {
+                    settingsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                settingsButton.textContent = 'Masquer les paramètres';
+            } else {
+                settingsDiv.style.display = 'none';
+                settingsButton.textContent = 'Paramètres';
+            }
+        }
+
+        function smoothScroll(target) {
+            const settingsDiv = document.getElementById(target);
+            const settingsButton = document.getElementById('settingsButton');
+            const settingsDivStyle = window.getComputedStyle(settingsDiv);
+
+            if (settingsDivStyle.display === 'none') {
+                settingsDiv.style.display = 'block';
+                const isVisible = isElementInViewport(settingsDiv);
+                if (!isVisible) {
+                    const startPosition = window.pageYOffset;
+                    const targetPosition = settingsDiv.offsetTop;
+                    const distance = targetPosition - startPosition;
+                    const duration = 500;
+                    let start = null;
+
+                    function step(timestamp) {
+                        if (!start) start = timestamp;
+                        const progress = timestamp - start;
+                        window.scrollTo(0, easeInOutCubic(progress, startPosition, distance, duration));
+                        if (progress < duration) {
+                            window.requestAnimationFrame(step);
+                        }
+                    }
+
+                    window.requestAnimationFrame(step);
+                }
+                settingsButton.textContent = 'Masquer les paramètres';
+            } else {
+                settingsDiv.style.display = 'none';
+                settingsButton.textContent = 'Paramètres';
+            }
+        }
+
+        function isElementInViewport(element) {
+            const rect = element.getBoundingClientRect();
+
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        }
+
+        function easeInOutCubic(t, b, c, d) {
+            t /= d / 2;
+            if (t < 1) return c / 2 * t * t * t + b;
+            t -= 2;
+            return c / 2 * (t * t * t + 2) + b;
+        }
+
+        function addToPassedTracks(trackName) {
+            passedTracks.push(trackName);
+            updatePassedTracksUI();
+        }
+
+        function updatePassedTracksUI() {
+            const passedTracksList = document.getElementById('passedTracksList');
+            passedTracksList.innerHTML = '';
+            passedTracks.forEach(trackName => {
+                const li = document.createElement('li');
+                li.textContent = trackName;
+                li.addEventListener('click', () => {
+                    passedTracks = passedTracks.filter(item => item !== trackName);
+                    updatePassedTracksUI();
+                });
+                passedTracksList.appendChild(li);
+            });
+            const passedTracksContainer = document.getElementById('passedTracks');
+            passedTracksContainer.style.display = passedTracks.length > 0 ? 'block' : 'none';
+        }
+
+        function resetPassedTracks() {
+            passedTracks = [];
+            updatePassedTracksUI();
+        }
+
+        function hidePassedTracks() {
+            const passedTracksContainer = document.getElementById('passedTracks');
+            passedTracksContainer.style.display = 'none';
+        }
 
         const accessToken = getAccessTokenFromUrl();
         if (accessToken) {
-            const service = detectServiceFromToken(accessToken);
-            fetchUserPlaylists(accessToken, service);
+            fetchUserPlaylists(accessToken);
         } else {
-            document.getElementById('error').textContent = 'Token d\'accès non trouvé dans l\'URL.';
+            document.getElementById('error').textContent = 'Erreur de connexion. Aucun token trouvé.';
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const showPassedTracksButton = document.getElementById('showPassedTracksButton');
+            const passedTracksContainer = document.getElementById('passedTracks');
+            passedTracksContainer.style.display = 'none';
+
+            showPassedTracksButton.addEventListener('click', function() {
+                if (passedTracksContainer.style.display === 'none') {
+                    passedTracksContainer.style.display = 'block';
+                    showPassedTracksButton.textContent = 'Masquer les titres passés';
+                } else {
+                    passedTracksContainer.style.display = 'none';
+                    showPassedTracksButton.textContent = 'Afficher les titres passés';
+                }
+            });
+            updateMaxTracksToPlay();
+        });
+        const leaderboardButton = document.getElementById('leaderboardButton');
+        leaderboardButton.addEventListener('click', function() {
+            window.open(`https://n-oubliez-pas-les-cagoles.vercel.app/leaderboard.html`, '_blank');
+        });
+
+
     </script>
-    <!-- QR code integration -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qr-code-styling/1.5.0/qr-code-styling.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-        const qrCodeUrl = 'https://example.com'; // Remplacez par l'URL appropriée
-        const qrCode = new QRCodeStyling({
-            width: 300,
-            height: 300,
-            data: qrCodeUrl,
-            image: 'path/to/logo.png',
-            dotsOptions: {
-                color: '#4267b2',
-                type: 'rounded'
-            },
-            backgroundOptions: {
-                color: '#e9ebee'
-            },
-            imageOptions: {
-                crossOrigin: 'anonymous',
-                margin: 20
+        const uniqueId = Math.random().toString(36).substr(2, 9);
+        const qrCodeUrl = `https://n-oubliez-pas-les-cagoles.vercel.app/reponse.html?id=${uniqueId}`;
+    
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: qrCodeUrl,
+            width: 128,
+            height: 128,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    
+        const qrcodeContainer = document.getElementById('qrcodeContainer');
+        const controls = document.getElementById('controls');
+        const showQRCodeButton = document.createElement('button');
+        showQRCodeButton.textContent = 'Afficher QR Code';
+        showQRCodeButton.addEventListener('click', function() {
+            if (qrcodeContainer.style.display === 'none') {
+                qrcodeContainer.style.display = 'block';
+            } else {
+                qrcodeContainer.style.display = 'none';
             }
         });
-        qrCode.append(document.getElementById('qrcode'));
+        controls.appendChild(showQRCodeButton);
     </script>
+    
 </body>
 </html>
